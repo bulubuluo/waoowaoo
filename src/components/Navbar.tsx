@@ -26,9 +26,6 @@ export default function Navbar() {
                 className="object-contain transition-transform group-hover:scale-110"
               />
             </Link>
-            <span className="glass-chip glass-chip-info px-2.5 py-1 text-[11px]">
-              {tc('betaVersion')}
-            </span>
           </div>
           <div className="flex items-center space-x-6">
             {session ? (
