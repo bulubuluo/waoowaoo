@@ -88,7 +88,7 @@ services:
       # 流式
       LLM_STREAM_EPHEMERAL_ENABLED: "true"
     ports:
-      - "13000:3000"
+      - "80:3000"
       - "13010:3010"
     volumes:
       - ./data:/app/data
