@@ -71,7 +71,7 @@ fi
 echo ""
 echo "=============================================="
 echo "✅ 开源版本发布成功！"
-echo "🔗 https://github.com/waoowaooAI/waoowaoo"
+echo "🔗 https://github.com/plotweaveAI/plotweave"
 echo "=============================================="
 echo ""
 
