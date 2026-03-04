@@ -118,16 +118,20 @@ const BILLABLE_MODEL_TYPE_TO_PRICING_API_TYPE: Readonly<Record<UnifiedModelType,
   image: 'image',
   video: 'video',
   audio: 'voice',
-  lipsync: 'lip-sync',
+  // @author ikun
+  // pricing catalog 中暂无 lip-sync 定价条目，跳过计费校验
+  lipsync: null,
 }
-const DEFAULT_FIELD_TO_PRICING_API_TYPE: Readonly<Record<DefaultModelField, 'text' | 'image' | 'video' | 'lip-sync'>> = {
+const DEFAULT_FIELD_TO_PRICING_API_TYPE: Readonly<Record<DefaultModelField, 'text' | 'image' | 'video' | 'lip-sync' | null>> = {
   analysisModel: 'text',
   characterModel: 'image',
   locationModel: 'image',
   storyboardModel: 'image',
   editModel: 'image',
   videoModel: 'video',
-  lipSyncModel: 'lip-sync',
+  // @author ikun
+  // pricing catalog 中暂无 lip-sync 定价条目，跳过计费校验
+  lipSyncModel: null,
 }
 const DEFAULT_LIPSYNC_MODEL_KEY = composeModelKey('fal', 'fal-ai/kling-video/lipsync/audio-to-video')
 
@@ -620,8 +624,10 @@ function validateDefaultModelPricing(defaultModels: DefaultModelsPayload, models
     const parsed = parseModelKeyStrict(modelKey)
     if (!parsed) continue
     const apiType = DEFAULT_FIELD_TO_PRICING_API_TYPE[field]
-
     // @author ikun
+    // apiType 为 null 表示该类型暂无定价体系，跳过校验
+    if (!apiType) continue
+
     // 先检查内置定价，再检查模型列表中的自定义定价
     if (!hasBuiltinPricingForModel(apiType, parsed.provider, parsed.modelId)) {
       const matchedModel = modelMap.get(parsed.modelKey)
@@ -666,6 +672,12 @@ function sanitizeDefaultModelsForBilling(defaultModels: DefaultModelsPayload): D
     }
 
     const apiType = DEFAULT_FIELD_TO_PRICING_API_TYPE[field]
+    // @author ikun
+    // apiType 为 null 表示暂无定价体系，保留原值
+    if (!apiType) {
+      sanitized[field] = parsed.modelKey
+      continue
+    }
     sanitized[field] = hasBuiltinPricingForModel(apiType, parsed.provider, parsed.modelId)
       ? parsed.modelKey
       : ''
